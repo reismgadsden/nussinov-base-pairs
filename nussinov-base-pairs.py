@@ -17,7 +17,7 @@ import numpy as np
 
 # main method that will 'probably' make calls to all other methods
 def main() -> None:
-    s = "AUCG"
+    s = "CAUG"
     max_base_pairs(s)
 
 
@@ -33,30 +33,36 @@ def max_base_pairs(s) -> None:
 
 
 def get_secondary_struct(N, s) -> None:
-    for j in range(1, 4):
-        for i in range(0, 4 - j):
+    for j in range(1, len(s)):
+        for i in range(0, len(s) - j):
             #print("i = " + str(i) + "; j =" + str(j + i) + ";")
             N[i, j + i] = get_max(N, s, i, j + i)
     return N
 
 
 def get_max(N, s, i, j):
-    print("i = " + str(i) + "; j =" + str(j) + ";")
+    #print("i = " + str(i) + "; j =" + str(j) + ";")
     first_case = N[i + 1, j]
 
     k_arr = []
-    for k in (i + 1, j):
-        print("k = " +str(k) + ";")
+    for k in range(i + 1, j+1):
+        if i == 2 and j == 4:
+            print("i: " + str(i) + "; j:" + str(j) + "; k: " + str(k))
+            print("k -> " + str(k) + "letters: " + s[i] + ", " + s[k])
         if is_pair(s[i], s[k]):
+            print("k = " + str(k) + ";")
             k_arr.append(k)
 
-    x = 1
-    for k in k_arr:
-        print("j = " + str(j) + "; k = " + str(k) + ";")
-        if (k + 1) < len(s):
-            x += N[i + 1, k - 1] + N[k + 1, j]
-        else:
-            x += N[i + 1, k - 1]
+    x = 0
+    if k_arr:
+        for k in k_arr:
+            temp = 0
+            if (k + 1) < len(s):
+                temp = N[i + 1, k - 1] + N[k + 1, j]
+            else:
+                temp = N[i + 1, k - 1]
+            x = max(temp, x)
+        x += 1
 
     return max(first_case, x)
 
@@ -67,7 +73,7 @@ def is_pair(c1, c2) -> bool:
         'C': ['G'],
         'G': ['C', 'U'],
         'T': ['A'],
-        'U': ['A']
+        'U': ['A', 'G']
     }
 
     return c2 in look_up[c1]
